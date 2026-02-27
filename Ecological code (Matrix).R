@@ -2,33 +2,20 @@ library(deSolve)
 
 # ----- Parameters -----
 params <- list(
-  r = c(0.6, 0.5, 0.55, 0.65, 0.58),  # Reproduction rate
+  r = c(0.6, 0.5, 0.55, 0.65, 0.58),   # Reproduction rate
   Kmax = c(1000, 800, 900, 1100, 950), # Carrying capacity
   m = c(0.2, 0.25, 0.22, 0.18, 0.21),  # Natural mortality
-  p = c(0.1, 0.15, 0.12, 0.09, 0.11) # Predation mortality 
+  p = c(0.1, 0.15, 0.12, 0.09, 0.11),  # Predation mortality
+  F = c(0.05, 0.08, 0.04, 0, 0)        # Fishing effort per region
 )
 
 # ----- Migration Matrix -----
-# Rows = FROM region
-# Columns = TO region
-
 M <- matrix(0, nrow = 5, ncol = 5)
-
-# Region 1 connects to 2
 M[1,2] <- 0.03
-
-# Region 2 connects to 1 and 3
-M[2,1] <- 0.01
-M[2,3] <- 0.02
-
-# Region 3 connects to 2 and 4
-M[3,2] <- 0.015
-M[3,4] <- 0.025
-
-# Region 4 connects to 3
+M[2,1] <- 0.01; M[2,3] <- 0.02
+M[3,2] <- 0.015; M[3,4] <- 0.025
 M[4,3] <- 0.02
-
-# Region 5 is isolated (no touching regions)
+# Region 5 isolated
 
 # ----- Initial Biomass -----
 state <- c(K1 = 500, K2 = 400, K3 = 450, K4 = 600, K5 = 480)
@@ -44,6 +31,7 @@ krill_model <- function(t, state, parameters) {
   Kmax <- parameters$Kmax
   m <- parameters$m
   p <- parameters$p
+  F <- parameters$F
   
   dK <- numeric(5)
   
@@ -52,8 +40,9 @@ krill_model <- function(t, state, parameters) {
     growth <- r[i] * K[i] * (1 - K[i]/Kmax[i])
     mortality <- m[i] * K[i]
     predation <- p[i] * K[i]
+    fishing <- F[i] * K[i]
     
-    dK[i] <- growth - mortality - predation
+    dK[i] <- growth - mortality - predation - fishing
   }
   
   # Migration dynamics
