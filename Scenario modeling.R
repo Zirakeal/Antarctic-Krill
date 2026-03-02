@@ -26,6 +26,8 @@ params <- list(
   m21 = 0.04, m23 = 0.075, m24 = 0.05, 
   m32 = 0.075, m34 = 0.05,
   m42 = 0.05, m43 = 0.05,
+  
+  # catchability coefficient
   q = 2e-8
 )
 
@@ -67,7 +69,6 @@ krill_model <- function(t, state, parameters) {
     # --------------------------
     # Harvest
     # --------------------------
-    
     H1 <- q * E1 * K1
     H2 <- q * E2 * K2
     H3 <- q * E3 * K3
@@ -113,6 +114,7 @@ krill_model <- function(t, state, parameters) {
            dE4 = 0))
   })
 }
+
 # ------------------------------------------
 # 5. RUN MODEL
 # ------------------------------------------
@@ -121,6 +123,7 @@ out <- ode(y = state, times = times,
            func = krill_model, parms = params)
 
 out <- as.data.frame(out)
+
 
 # ------------------------------------------
 # Stacked biomass plot
