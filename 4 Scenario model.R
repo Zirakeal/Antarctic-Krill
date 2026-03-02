@@ -35,7 +35,7 @@ base_params <- list(
   m42 = 0.05, m43 = 0.05,
   
   # Catchability
-  q = 2e-7,
+  q = 2e-4,
   
   # Scenario (will be changed in loop)
   scenario = 0

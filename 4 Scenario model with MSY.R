@@ -35,7 +35,7 @@ base_params <- list(
   m42 = 0.05, m43 = 0.05,
   
   # Catchability
-  q = 2e-4,
+  q = 2e-5,
   
   # Scenario (will be changed in loop)
   scenario = 0
@@ -52,10 +52,10 @@ state <- c(
   K4 = 15750000,
   
   # Effort (constant)
-  E1 = 1000,
-  E2 = 1000,
-  E3 = 1000,
-  E4 = 1000
+  E1 = 800,
+  E2 = 800,
+  E3 = 800,
+  E4 = 800
 )
 
 # ------------------------------------------
@@ -194,8 +194,85 @@ best_policy <- sustainable %>%
   slice(1)
 
 best_policy
+
+# ==========================================
+# 6. MSY ANALYSIS (NUMERICAL)
+# ==========================================
+
+effort_values <- seq(0, 10000, by = 1000)
+
+msy_results <- data.frame()
+
+for (e in effort_values) {
+  
+  # set equal effort in all regions
+  state_msy <- state
+  state_msy["E1"] <- e
+  state_msy["E2"] <- e
+  state_msy["E3"] <- e
+  state_msy["E4"] <- e
+  
+  out_msy <- ode(y = state_msy, times = times,
+                 func = krill_model,
+                 parms = base_params)
+  
+  out_msy <- as.data.frame(out_msy)
+  
+  # compute harvest
+  out_msy$H1 <- base_params$q * e * out_msy$K1
+  out_msy$H2 <- base_params$q * e * out_msy$K2
+  out_msy$H3 <- base_params$q * e * out_msy$K3
+  out_msy$H4 <- base_params$q * e * out_msy$K4
+  
+  out_msy$TotalCatch <- out_msy$H1 + out_msy$H2 +
+    out_msy$H3 + out_msy$H4
+  
+  mean_catch <- mean(out_msy$TotalCatch[(length(times)/2):length(times)])
+  
+  final_biomass <- sum(out_msy[nrow(out_msy), c("K1","K2","K3","K4")])
+  
+  msy_results <- rbind(msy_results,
+                       data.frame(Effort = e,
+                                  MeanCatch = mean_catch,
+                                  FinalBiomass = final_biomass))
+}
+
+# Plot MSY 
+ggplot(msy_results, aes(Effort, MeanCatch)) +
+  geom_line(size = 1.3) +
+  theme_minimal() +
+  labs(title = "Yield Curve (MSY Analysis)",
+       x = "Effort",
+       y = "Average Catch") +
+  geom_vline(xintercept =
+               msy_results$Effort[which.max(msy_results$MeanCatch)],
+             linetype="dashed")
+
+# Plot Biomass at different effort levels
+ggplot(msy_results, aes(Effort, FinalBiomass)) +
+  geom_line(size = 1.3) +
+  theme_minimal() +
+  labs(title = "Biomass at Different Effort Levels",
+       x = "Effort",
+       y = "Final Biomass")
+
+# Identify MSY point
+msy_point <- msy_results[which.max(msy_results$MeanCatch), ]
+
+msy_point
+
+# Compare scenario catches to MSY
+MSY_value <- max(msy_results$MeanCatch)
+
+ggplot(all_results, aes(time, TotalCatch, color = Scenario)) +
+  geom_line(size = 1.2) +
+  geom_hline(yintercept = MSY_value,
+             linetype="dashed") +
+  theme_minimal() +
+  labs(title = "Scenario Catch vs MSY",
+       y = "Total Catch")
 # ------------------------------------------
-# 6. TOTAL BIOMASS COMPARISON
+# 7. TOTAL BIOMASS COMPARISON
 # ------------------------------------------
 
 ggplot(all_results, 
@@ -208,7 +285,7 @@ ggplot(all_results,
   theme(legend.position = "bottom")
 
 # ------------------------------------------
-# 7. REGIONAL BIOMASS COMPOSITION (STACKED)
+# 8. REGIONAL BIOMASS COMPOSITION (STACKED)
 # ------------------------------------------
 
 out_long <- all_results %>%
