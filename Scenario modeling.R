@@ -14,7 +14,7 @@ library(reshape2)
 # ------------------------------------------
 
 params <- list(
-  r1 = 0.6, r2 = 0.6, r3 = 0.6, r4 = 0.6, # growth rate
+  r1 = 0.7, r2 = 0.7, r3 = 0.7, r4 = 0.7, # growth rate
   Kmax1 = 25000000, # Carry capacity
   Kmax2 = 35000000,
   Kmax3 = 40000000,
@@ -44,7 +44,7 @@ state <- c(
 # 3. TIME
 # ------------------------------------------
 
-times <- seq(0, 120, by = 1)
+times <- seq(0, 25, by = 1)
 
 state <- c(
   K1 = 15750000,
@@ -178,7 +178,7 @@ ggplot(out, aes(x = K1, y = TotalBiomass)) +
        y = "Total Biomass")
 
 # ------------------------------------------
-# Migration Heatmap
+# Migration Heat map
 # ------------------------------------------
 out_rel <- out
 out_rel[,c("K1","K2","K3","K4")] <-
