@@ -15,15 +15,15 @@ library(dplyr)
 params <- list(
   
   # --- Biological parameters
-  r1 = 0.5, r2 = 0.6, r3 = 0.6, r4 = 0.5,
+  r1 = 0.8, r2 = 0.8, r3 = 0.8, r4 = 0.8,
   
   Kmax1 = 25000000,
   Kmax2 = 35000000,
   Kmax3 = 40000000,
   Kmax4 = 20000000,
   
-  m1 = 0.2, m2 = 0.25, m3 = 0.22, m4 = 0.18,
-  p1 = 0.1, p2 = 0.15, p3 = 0.12, p4 = 0.09,
+  m1 = 0.2, m2 = 0.2, m3 = 0.2, m4 = 0.2,
+  p1 = 0.1, p2 = 0.1, p3 = 0.1, p4 = 0.1,
   
   # --- Migration
   m21 = 0.04,
@@ -35,7 +35,7 @@ params <- list(
   m43 = 0.05,
   
   # --- Economic parameters
-  q = 2e-8,       # catchability
+  q = 2e-10,       # catchability
   price = 2000,   # $ per ton
   cost = 500,     # cost per unit effort
   alpha = 1e-7    # effort adjustment speed
@@ -46,13 +46,13 @@ params <- list(
 # ------------------------------------------
 
 state <- c(
-  K1 = 15750000,
+  K1 = 15750000, #initial biomass
   K2 = 15750000,
   K3 = 15750000,
   K4 = 15750000,
-  E1 = 5,
+  E1 = 5, #Initial effort
   E2 = 5,
-  E3 = 5,
+  E3 = 5, 
   E4 = 5
 )
 
