@@ -24,7 +24,7 @@ base_params <- list(
   Kmax4 = 20000000,
   
   # Natural mortality
-  m1 = 0.2, m2 = 0.2, m3 = 0.2, m4 = 0.2,
+  m1 = 0.1, m2 = 0.1, m3 = 0.1, m4 = 0.1,
   
   # Predation
   p1 = 0.1, p2 = 0.1, p3 = 0.1, p4 = 0.1,
@@ -52,10 +52,10 @@ state <- c(
   K4 = 15750000,
   
   # Effort (constant)
-  E1 = 800,
-  E2 = 800,
-  E3 = 800,
-  E4 = 800
+  E1 = 9000,
+  E2 = 9000,
+  E3 = 9000,
+  E4 = 9000
 )
 
 # ------------------------------------------
@@ -199,7 +199,7 @@ best_policy
 # 6. MSY ANALYSIS (NUMERICAL)
 # ==========================================
 
-effort_values <- seq(0, 10000, by = 1000)
+effort_values <- seq(0, 10000, by = 100)
 
 msy_results <- data.frame()
 
