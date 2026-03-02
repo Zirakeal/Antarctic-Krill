@@ -52,10 +52,10 @@ state <- c(
   K4 = 15750000,
   
   # Effort (constant)
-  E1 = 9000,
-  E2 = 9000,
-  E3 = 9000,
-  E4 = 9000
+  E1 = 10000,
+  E2 = 10000,
+  E3 = 10000,
+  E4 = 10000
 )
 
 # ------------------------------------------
@@ -199,7 +199,7 @@ best_policy
 # 6. MSY ANALYSIS (NUMERICAL)
 # ==========================================
 
-effort_values <- seq(0, 10000, by = 100)
+effort_values <- seq(0, 20000, by = 100)
 
 msy_results <- data.frame()
 
