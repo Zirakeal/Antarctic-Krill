@@ -35,7 +35,7 @@ base_params <- list(
   m42 = 0.05, m43 = 0.05,
   
   # Catchability
-  q = 2e-7,
+  q = 2e-4,
   
   # Scenario (will be changed in loop)
   scenario = 0
@@ -141,7 +141,33 @@ for (s in 1:4) {
   
   out <- as.data.frame(out)
   
-  # Total biomass
+  # --------------------------
+  # Compute Harvest
+  # --------------------------
+  
+  out$H1 <- params$q * out$E1 * out$K1
+  out$H2 <- params$q * out$E2 * out$K2
+  out$H3 <- params$q * out$E3 * out$K3
+  out$H4 <- params$q * out$E4 * out$K4
+  
+  # Apply scenario closures
+  if (s == 1) out$H1 <- 0
+  if (s == 2) out$H2 <- 0
+  if (s == 3) out$H3 <- 0
+  if (s == 4) out$H4 <- 0
+  
+  # --------------------------
+  # Total Catch
+  # --------------------------
+  
+  out$TotalCatch <- out$H1 + out$H2 + out$H3 + out$H4
+  
+  out$CumulativeCatch <- cumsum(out$TotalCatch)
+  
+  # --------------------------
+  # Total Biomass
+  # --------------------------
+  
   out$TotalBiomass <- rowSums(out[,c("K1","K2","K3","K4")])
   
   out$Scenario <- paste("Scenario", s)
@@ -151,6 +177,23 @@ for (s in 1:4) {
 
 all_results <- bind_rows(results)
 
+final_summary <- all_results %>%
+  group_by(Scenario) %>%
+  summarise(
+    FinalBiomass = last(TotalBiomass),
+    TotalCatch = last(CumulativeCatch)
+  )
+
+initial_total_biomass <- sum(state[c("K1","K2","K3","K4")])
+
+sustainable <- final_summary %>%
+  filter(FinalBiomass >= initial_total_biomass)
+
+best_policy <- sustainable %>%
+  arrange(desc(TotalCatch)) %>%
+  slice(1)
+
+best_policy
 # ------------------------------------------
 # 6. TOTAL BIOMASS COMPARISON
 # ------------------------------------------
